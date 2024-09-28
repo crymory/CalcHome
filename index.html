@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор коммунальных платежей</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="number"] {
+            width: 80px;
+        }
+        #total {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        button {
+            margin-right: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Калькулятор коммунальных платежей</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Услуга</th>
+                <th>Тариф</th>
+                <th>Предыдущие показания</th>
+                <th>Текущие показания</th>
+                <th>Расход</th>
+                <th>Сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-service="hotWater">
+                <td>Горячая вода</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td><input type="number" step="0.01" class="prev" value="0"></td>
+                <td><input type="number" step="0.01" class="current" value="0"></td>
+                <td class="usage">0</td>
+                <td class="total">0</td>
+            </tr>
+            <tr data-service="coldWater">
+                <td>Холодная вода</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td><input type="number" step="0.01" class="prev" value="0"></td>
+                <td><input type="number" step="0.01" class="current" value="0"></td>
+                <td class="usage">0</td>
+                <td class="total">0</td>
+            </tr>
+            <tr data-service="electricity">
+                <td>Электроэнергия</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td><input type="number" step="0.01" class="prev" value="0"></td>
+                <td><input type="number" step="0.01" class="current" value="0"></td>
+                <td class="usage">0</td>
+                <td class="total">0</td>
+            </tr>
+            <tr data-service="gas">
+                <td>Газ</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td>-</td>
+                <td><input type="number" step="0.01" class="usage" value="0"></td>
+                <td>-</td>
+                <td class="total">0</td>
+            </tr>
+            <tr data-service="garbage">
+                <td>Вывоз мусора</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td class="total">0</td>
+            </tr>
+            <tr data-service="heatingSubscription">
+                <td>Отопление (абонентский платеж)</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td class="total">0</td>
+            </tr>
+            <tr data-service="coldWaterSubscription">
+                <td>Холодная вода (абонентский платеж)</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td class="total">0</td>
+            </tr>
+            <tr data-service="gasDelivery">
+                <td>Газ (доставка)</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td class="total">0</td>
+            </tr>
+            <tr data-service="rent">
+                <td>Квартплата</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td class="total">0</td>
+            </tr>
+            <tr data-service="hotWaterSubscription">
+                <td>Горячая вода (абонентское обслуживание)</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td class="total">0</td>
+            </tr>
+            <tr data-service="heating">
+                <td>Отопление</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td>-</td>
+                <td><input type="number" step="0.01" class="usage" value="0"></td>
+                <td>-</td>
+                <td class="total">0</td>
+            </tr>
+            <tr data-service="intercom">
+                <td>Домофон</td>
+                <td><input type="number" step="0.01" class="rate" value="0"></td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td class="total">0</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>Итого: <span id="total">0</span></p>
+    <button onclick="saveData()">Сохранить данные</button>
+    <button onclick="clearData()">Очистить данные</button>
+    <button onclick="exportToCSV()">Экспорт в CSV</button>
+
+    <script>
+        function calculate() {
+            let total = 0;
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const service = row.dataset.service;
+                const rate = parseFloat(row.querySelector('.rate').value) || 0;
+                let usage = 0;
+                let rowTotal = 0;
+
+                if (['hotWater', 'coldWater', 'electricity'].includes(service)) {
+                    const prev = parseFloat(row.querySelector('.prev').value) || 0;
+                    const current = parseFloat(row.querySelector('.current').value) || 0;
+                    usage = current - prev;
+                    row.querySelector('.usage').textContent = usage.toFixed(2);
+                    rowTotal = rate * usage;
+                } else if (['gas', 'heating'].includes(service)) {
+                    usage = parseFloat(row.querySelector('.usage').value) || 0;
+                    rowTotal = rate * usage;
+                } else {
+                    rowTotal = rate;
+                }
+
+                row.querySelector('.total').textContent = rowTotal.toFixed(2);
+                total += rowTotal;
+            });
+            
+            document.getElementById('total').textContent = total.toFixed(2);
+        }
+
+        function saveData() {
+            const data = {};
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const service = row.dataset.service;
+                data[service] = {
+                    rate: row.querySelector('.rate').value,
+                    prev: row.querySelector('.prev') ? row.querySelector('.prev').value : null,
+                    current: row.querySelector('.current') ? row.querySelector('.current').value : null,
+                    usage: row.querySelector('.usage') ? (row.querySelector('.usage').tagName === 'INPUT' ? row.querySelector('.usage').value : row.querySelector('.usage').textContent) : null,
+                    total: row.querySelector('.total').textContent
+                };
+            });
+            localStorage.setItem('utilityBillData', JSON.stringify(data));
+            alert('Данные сохранены');
+        }
+
+        function loadData() {
+            const data = JSON.parse(localStorage.getItem('utilityBillData'));
+            if (data) {
+                document.querySelectorAll('tbody tr').forEach(row => {
+                    const service = row.dataset.service;
+                    if (data[service]) {
+                        row.querySelector('.rate').value = data[service].rate || '';
+                        if (row.querySelector('.prev')) row.querySelector('.prev').value = data[service].prev || '';
+                        if (row.querySelector('.current')) row.querySelector('.current').value = data[service].current || '';
+                        if (row.querySelector('.usage') && row.querySelector('.usage').tagName === 'INPUT') {
+                            row.querySelector('.usage').value = data[service].usage || '';
+                        } else if (row.querySelector('.usage')) {
+                            row.querySelector('.usage').textContent = data[service].usage || '0';
+                        }
+                        row.querySelector('.total').textContent = data[service].total || '0';
+                    }
+                });
+                calculate();
+            }
+        }
+
+        function clearData() {
+            localStorage.removeItem('utilityBillData');
+            document.querySelectorAll('input').forEach(input => {
+                input.value = '';
+            });
+            document.querySelectorAll('.usage, .total').forEach(el => {
+                el.textContent = '0';
+            });
+            document.getElementById('total').textContent = '0';
+            alert('Данные очищены');
+        }
+
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Услуга,Тариф,Предыдущие показания,Текущие показания,Расход,Сумма\n";
+
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const service = row.querySelector('td').textContent;
+                const rate = row.querySelector('.rate').value;
+                const prev = row.querySelector('.prev') ? row.querySelector('.prev').value : '';
+                const current = row.querySelector('.current') ? row.querySelector('.current').value : '';
+                const usage = row.querySelector('.usage').tagName === 'INPUT' ? row.querySelector('.usage').value : row.querySelector('.usage').textContent;
+                const total = row.querySelector('.total').textContent;
+
+                csvContent += `${service},${rate},${prev},${current},${usage},${total}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "utility_bill_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+
+        window.addEventListener('load', loadData);
+        calculate();
+    </script>
+</body>
+</html>
